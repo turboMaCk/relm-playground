@@ -25,6 +25,7 @@ struct Model {
 #[derive(Msg)]
 enum Msg {
     Increment,
+    IncrementSome(i32),
     Decrement,
     Quit,
 }
@@ -40,6 +41,7 @@ struct Widgets {
     counter_label: Label,
     minus_button: Button,
     plus_button: Button,
+    plus10_button: Button,
     window: Window,
 }
 
@@ -65,6 +67,10 @@ impl Update for Win {
         match event {
             Msg::Increment => {
                 self.model.counter += 1;
+                label.set_text(&self.model.counter.to_string());
+            },
+            Msg::IncrementSome(n) => {
+                self.model.counter += n;
                 label.set_text(&self.model.counter.to_string());
             },
             Msg::Decrement => {
@@ -96,6 +102,10 @@ impl Widget for Win {
         let minus_button = Button::new_with_label("-");
         vbox.add(&minus_button);
 
+        // Increment 10
+        let plus10_button = Button::new_with_label("+10");
+        vbox.add(&plus10_button);
+
         // Counter Label
         let counter_label = Label::new("0");
         vbox.add(&counter_label);
@@ -110,6 +120,7 @@ impl Widget for Win {
         // Send the message Increment when the button is clicked.
         connect!(relm, plus_button, connect_clicked(_), Msg::Increment);
         connect!(relm, minus_button, connect_clicked(_), Msg::Decrement);
+        connect!(relm, plus10_button, connect_clicked(_), Msg::IncrementSome(10));
         connect!(relm, window, connect_delete_event(_, _), return (Some(Msg::Quit), Inhibit(false)));
 
         Win {
@@ -118,6 +129,7 @@ impl Widget for Win {
                 counter_label,
                 minus_button,
                 plus_button,
+                plus10_button,
                 window: window,
             },
         }
